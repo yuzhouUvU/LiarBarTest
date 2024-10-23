@@ -20,7 +20,7 @@ namespace plugin_test
             Harmony.CreateAndPatchAll(typeof(MyLobbyController));
             Harmony.CreateAndPatchAll(typeof(MyBlorfGamePlay));
             Harmony.CreateAndPatchAll(typeof(MyCharController));
-            Harmony.CreateAndPatchAll(typeof(DiceGamePlay));
+            Harmony.CreateAndPatchAll(typeof(MyDiceGamePlay));
         }
     }
 
