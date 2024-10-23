@@ -1,7 +1,9 @@
-﻿using BepInEx;
+using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
 using HarmonyLib.Tools;
 using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 
@@ -31,14 +33,7 @@ namespace plugin_test
         [HarmonyPrefix]
         static void WaitforRevolver(BlorfGamePlay __instance)
         {
-            revolverbullletRef(__instance) = 9999;
-        }
-
-        [HarmonyPatch("CommandBeDead")]
-        [HarmonyPrefix]
-        static void CommandBeDead(BlorfGamePlay __instance)
-        {
-            return;
+            if(MyCharController.open4)revolverbullletRef(__instance) = 9999;
         }
     }
 
@@ -50,6 +45,23 @@ namespace plugin_test
         private static bool open1 = false;
         private static bool open2 = false;
         private static bool open3 = false;
+        public static bool open4 = false;
+
+        [DllImport("kernel32.dll")]
+        public static extern bool Beep(int freq, int duration);
+
+
+        static void dodo(bool a)
+        {
+            if (a)
+            {
+                Beep(800, 500);
+            }
+            else
+            {
+                Beep(500, 500);
+            }
+        }
 
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
@@ -104,14 +116,22 @@ namespace plugin_test
             if(Input.GetKeyDown(KeyCode.F3))
             {
                 open1 = !open1;
+                dodo(open1);
             }
             else if (Input.GetKeyDown(KeyCode.F4))
-            { 
-                open2 = !open2; 
+            {
+                open2 = !open2;
+                dodo(open2);
             }
             else if (Input.GetKeyDown(KeyCode.F5))
             {
                 open3 = !open3;
+                dodo(open3);
+            }
+            else if (Input.GetKeyDown(KeyCode.F6))
+            {
+                open4 = !open4;
+                dodo(open4);
             }
             if (open1) { vector.y += (float)(Math.Sin(sinValue++) * 0.01); }
             if (open2) { __instance.transform.Rotate(new Vector3(0, 2f, 0), Space.Self); }
@@ -147,7 +167,7 @@ namespace plugin_test
         [HarmonyPrefix]
         static void UpdateCall(ref DiceGamePlay __instance)
         {
-            if(__instance.isOwned)
+            if(__instance.isOwned && MyCharController.open4)
             {
                 playerStats(__instance).Dead = false;
                 playerStats(__instance).NetworkDead = false;
