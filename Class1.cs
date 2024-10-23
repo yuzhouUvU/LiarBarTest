@@ -67,6 +67,7 @@ namespace plugin_test
         [HarmonyPrefix]
         static void Update(CharController __instance)
         {
+            if (!__instance.isOwned) return;
             float zoomSpeed = 0.1f;
             Vector3 vector = Vector3.zero;
 
